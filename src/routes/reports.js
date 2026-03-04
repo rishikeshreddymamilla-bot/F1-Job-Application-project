@@ -1,6 +1,8 @@
+
 const express = require('express');
 const router = express.Router();
 const prisma = require('../prisma');
+const { updateCompanyScore } = require('../services/scoringService');
 
 // POST submit anonymous report
 router.post('/', async (req, res) => {
@@ -20,8 +22,12 @@ router.post('/', async (req, res) => {
       }
     });
 
-    res.status(201).json(report);
+    // recalculate score after every new report
+    const newScore = await updateCompanyScore(companyId);
+
+    res.status(201).json({ report, newScore });
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: 'Something went wrong' });
   }
 });
