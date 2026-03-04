@@ -16,3 +16,5 @@ app.listen(PORT, () => {
 });
 const reportRoutes = require('./routes/reports');
 app.use('/reports', reportRoutes);
+const authRoutes = require('./routes/auth');
+app.use('/auth', authRoutes);
