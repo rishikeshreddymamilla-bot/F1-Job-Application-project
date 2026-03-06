@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const prisma = require('../prisma');
-const authMiddleware = require('../middleware/authMiddleware');
+const authMiddleware = require('../Middleware/authMiddleware');
 
 // GET all companies - public
 router.get('/', async (req, res) => {
