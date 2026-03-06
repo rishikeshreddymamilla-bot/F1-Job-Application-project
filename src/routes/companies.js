@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const prisma = require('../prisma');
+const authMiddleware = require('../middleware/authMiddleware');
 
-// GET all companies
+// GET all companies - public
 router.get('/', async (req, res) => {
   try {
     const companies = await prisma.company.findMany();
@@ -12,7 +13,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// GET one company
+// GET one company - public
 router.get('/:id', async (req, res) => {
   try {
     const company = await prisma.company.findUnique({
@@ -25,8 +26,8 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// POST create company
-router.post('/', async (req, res) => {
+// POST create company - protected
+router.post('/', authMiddleware, async (req, res) => {
   try {
     const { name, location, industry } = req.body;
     if (!name || !location || !industry) {
@@ -41,11 +42,10 @@ router.post('/', async (req, res) => {
   }
 });
 
-module.exports = router;
-// PUT update company
-router.put('/:id', async (req, res) => {
-  const { name, location, industry } = req.body;
+// PUT update company - protected
+router.put('/:id', authMiddleware, async (req, res) => {
   try {
+    const { name, location, industry } = req.body;
     const company = await prisma.company.update({
       where: { id: req.params.id },
       data: { name, location, industry }
@@ -56,8 +56,8 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// DELETE company
-router.delete('/:id', async (req, res) => {
+// DELETE company - protected
+router.delete('/:id', authMiddleware, async (req, res) => {
   try {
     await prisma.company.delete({
       where: { id: req.params.id }
@@ -67,3 +67,5 @@ router.delete('/:id', async (req, res) => {
     res.status(404).json({ error: 'Company not found' });
   }
 });
+
+module.exports = router;
