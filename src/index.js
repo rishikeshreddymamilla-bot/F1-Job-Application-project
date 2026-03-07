@@ -4,7 +4,7 @@ const app = express();
 const companyRoutes = require('./routes/companies');
 const reportRoutes = require('./routes/reports');
 const authRoutes = require('./routes/auth');
-
+const cors = require('cors');
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
@@ -12,6 +12,7 @@ const limiter = rateLimit({
 });
 
 app.use(express.json());
+app.use(cors());
 app.use(limiter);
 
 app.get('/health', (req, res) => {
