@@ -1,17 +1,25 @@
-
 const express = require('express');
 const router = express.Router();
 const prisma = require('../prisma');
 const { updateCompanyScore } = require('../services/scoringService');
+const { body, validationResult } = require('express-validator');
+
+const reportValidation = [
+  body('companyId').notEmpty().withMessage('companyId is required'),
+  body('role').notEmpty().withMessage('role is required'),
+  body('outcome').isIn(['hired', 'rejected', 'no_response']).withMessage('outcome must be hired, rejected or no_response'),
+  body('rejectedDueToVisa').optional().isBoolean().withMessage('rejectedDueToVisa must be a boolean')
+];
 
 // POST submit anonymous report
-router.post('/', async (req, res) => {
+router.post('/', reportValidation, async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
   try {
     const { companyId, role, outcome, rejectedDueToVisa } = req.body;
-
-    if (!companyId || !role || !outcome) {
-      return res.status(400).json({ error: 'companyId, role and outcome are required' });
-    }
 
     const report = await prisma.applicationReport.create({
       data: {
@@ -22,9 +30,7 @@ router.post('/', async (req, res) => {
       }
     });
 
-    // recalculate score after every new report
     const newScore = await updateCompanyScore(companyId);
-
     res.status(201).json({ report, newScore });
   } catch (error) {
     console.error(error);
