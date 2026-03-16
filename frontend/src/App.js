@@ -1,24 +1,25 @@
-
-import { useState } from 'react';
+import CompanyDetail from './pages/CompanyDetail';
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import CompanyList from './pages/CompanyList';
 import SubmitReport from './pages/SubmitReport';
 import Login from './pages/Login';
 
 function App() {
-  const [page, setPage] = useState('companies');
-
   return (
-    <div>
+    <BrowserRouter>
       <nav>
-        <button onClick={() => setPage('companies')}>Companies</button>
-        <button onClick={() => setPage('submit')}>Submit Report</button>
-        <button onClick={() => setPage('login')}>Login</button>
+        <Link to="/">Companies</Link> |
+        <Link to="/submit"> Submit Report</Link> |
+        <Link to="/login"> Login</Link>
       </nav>
 
-      {page === 'companies' && <CompanyList />}
-      {page === 'submit' && <SubmitReport />}
-      {page === 'login' && <Login />}
-    </div>
+      <Routes>
+        <Route path="/" element={<CompanyList />} />
+        <Route path="/submit" element={<SubmitReport />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/companies/:id" element={<CompanyDetail />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

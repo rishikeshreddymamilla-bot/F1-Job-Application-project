@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import api from '../api';
 
 function CompanyList() {
@@ -12,7 +13,7 @@ function CompanyList() {
         setCompanies(res.data);
         setLoading(false);
       })
-      .catch(err => {
+      .catch(() => {
         setError('Failed to load companies');
         setLoading(false);
       });
@@ -27,7 +28,9 @@ function CompanyList() {
       {companies.length === 0 && <p>No companies yet.</p>}
       {companies.map(company => (
         <div key={company.id} style={{ border: '1px solid #ccc', margin: '10px', padding: '10px' }}>
-          <h2>{company.name}</h2>
+          <h2>
+            <Link to={`/companies/${company.id}`}>{company.name}</Link>
+          </h2>
           <p>Location: {company.location}</p>
           <p>Industry: {company.industry}</p>
           <p>Sponsorship Score: {company.sponsorshipScore}</p>
