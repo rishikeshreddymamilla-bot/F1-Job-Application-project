@@ -18,7 +18,6 @@ function CompanyDetail() {
       setLoading(false);
     }).catch(() => setLoading(false));
   }, [id]);
-
   if (loading) return <p>Loading...</p>;
   if (!company) return <p>Company not found</p>;
 
