@@ -4,7 +4,6 @@ const api = axios.create({
   baseURL: 'http://localhost:3000'
 });
 
-// Automatically attach token to every request
 api.interceptors.request.use(config => {
   const token = localStorage.getItem('token');
   if (token) {
@@ -12,5 +11,17 @@ api.interceptors.request.use(config => {
   }
   return config;
 });
+
+// Handle 401 responses - token expired or invalid
+api.interceptors.response.use(
+  response => response,
+  error => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem('token');
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
 
 export default api;
